@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Athena AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+  <header>
+    <h1>ATHENA</h1>
+    <span id="status">Handheld disconnected</span>
+  </header>
+
+  <section class="face">
+    <div class="eyes">
+      <div class="eye"><div class="pupil"></div></div>
+      <div class="eye"><div class="pupil"></div></div>
+    </div>
+    <div id="mouth"></div>
+  </section>
+
+  <section class="connection">
+    <button id="connect">Connect Athena via USB</button>
+    <button id="disconnect" disabled>Disconnect</button>
+  </section>
+
+  <section id="chat">
+    <div id="messages">
+      <p class="athena">Hello! I'm Athena. I'm ready.</p>
+    </div>
+    <form id="chatForm">
+      <input id="message" placeholder="Talk to Athena..." autocomplete="off">
+      <button type="submit">Send</button>
+    </form>
+  </section>
+  <footer>ATHENA DUAL-SCREEN · ESP32</footer>
+</main>
+<script src="athena.js"></script>
+</body>
+</html>
