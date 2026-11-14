@@ -1,0 +1,149 @@
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #080b18;
+  color: white;
+  font-family: Arial, sans-serif;
+  display: grid;
+  place-items: center;
+}
+
+.app {
+  width: min(680px, 94vw);
+  padding: 25px;
+  border: 1px solid #343b68;
+  border-radius: 20px;
+  background: #11162a;
+  box-shadow: 0 0 45px #262d6855;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1 {
+  letter-spacing: 7px;
+  color: #a9a5ff;
+}
+
+#status {
+  color: #ff7777;
+  font-size: 13px;
+}
+
+.face {
+  height: 250px;
+  background: #080d25;
+  border: 1px solid #363d79;
+  border-radius: 16px;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}
+
+.eyes {
+  display: flex;
+  gap: 55px;
+}
+
+.eye {
+  width: 85px;
+  height: 105px;
+  border-radius: 50%;
+  background: #f0efff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 25px #858bff;
+}
+
+.pupil {
+  width: 35px;
+  height: 48px;
+  border-radius: 50%;
+  background: #29265e;
+  position: relative;
+}
+
+.pupil::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+}
+
+#mouth {
+  width: 30px;
+  height: 5px;
+  border-radius: 50%;
+  background: #e9e8ff;
+}
+
+button {
+  background: #6964dc;
+  border: 0;
+  border-radius: 9px;
+  padding: 12px 17px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.connection {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#chat {
+  margin-top: 25px;
+  background: #090e20;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+#messages {
+  height: 180px;
+  overflow-y: auto;
+}
+
+#chatForm {
+  display: flex;
+  gap: 8px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #454b78;
+  background: #171d36;
+  color: white;
+}
+
+.athena { color: #b5b1ff; }
+.user { color: #8be4c4; }
+
+footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #777fa5;
+  font-size: 11px;
+}
