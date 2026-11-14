@@ -31,97 +31,32 @@
   }
   #status.on { background: rgba(61,220,132,.14); color: #6fe7a4; }
 
-  #compat {
-    display: none; margin: 12px 20px 0; padding: 12px 16px; font-size: 13px; line-height: 1.5;
-    background: rgba(180,50,70,.18); border: 1px solid rgba(255,120,140,.35);
-    border-radius: 12px; color: #ffd3dd;
+  #compat, #diag {
+    display: none; margin: 12px 20px 0; padding: 12px 16px; font-size: 13px; line-height: 1.55;
+    border-radius: 12px;
   }
+  #compat {
+    background: rgba(180,50,70,.18); border: 1px solid rgba(255,120,140,.35); color: #ffd3dd;
+  }
+  #diag.warn { background: rgba(190,140,30,.16); border: 1px solid rgba(255,190,80,.4); color: #ffe2a8; }
+  #diag.bad  { background: rgba(180,50,70,.18); border: 1px solid rgba(255,120,140,.35); color: #ffd3dd; }
+  #diag.good { background: rgba(61,220,132,.12); border: 1px solid rgba(80,230,150,.35); color: #bdf0d2; }
 
   main { flex: 1; display: flex; gap: 18px; padding: 18px 20px; max-width: 1020px; width: 100%; margin: 0 auto; }
   @media (max-width: 760px) { main { flex-direction: column; align-items: center; } }
 
-  /* ---------- anime face (mirrors the handheld TFT) ---------- */
+  /* ---------- face: pixel-exact copy of the handheld 128x70 TFT sprite ---------- */
+  .face-col { display: flex; flex-direction: column; align-items: center; }
   .face-card {
-    width: 250px; min-width: 250px; height: 340px; border-radius: 22px; position: relative;
-    overflow: hidden; box-shadow: 0 10px 34px rgba(0,0,0,.45); transition: background .6s ease;
-    border: 1px solid rgba(255,255,255,.10);
+    width: 320px; min-width: 320px; padding: 10px; border-radius: 18px;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 10px 34px rgba(0,0,0,.45);
   }
-  .mood-IDLE  { background: linear-gradient(165deg, #2a1b4e, #160e2c); }
-  .mood-HAPPY { background: linear-gradient(165deg, #8a5a18, #38220a); }
-  .mood-ANGRY { background: linear-gradient(165deg, #6e1420, #26060c); }
-  .mood-SAD   { background: linear-gradient(165deg, #14345e, #0a1526); }
-
-  .bangs {
-    position: absolute; top: -10px; left: -8px; right: -8px; height: 66px;
-    background: #3b2a66; border-radius: 0 0 44% 44% / 0 0 70% 70%;
-  }
-  .bangs::before, .bangs::after {
-    content: ""; position: absolute; top: 0; width: 20px; height: 86px;
-    background: #3b2a66; border-radius: 12px;
-  }
-  .bangs::before { left: 4px; } .bangs::after { right: 4px; }
-
-  .eyes { position: relative; margin: 86px auto 0; display: flex; gap: 30px; justify-content: center; }
-  .eye {
-    width: 46px; height: 56px; background: #fff; position: relative; overflow: hidden;
-    border-radius: 50% 50% 48% 48% / 55% 55% 45% 45%; border: 3px solid #201430;
-    transition: transform .18s ease;
-  }
-  .iris {
-    position: absolute; left: 50%; top: 6px; transform: translateX(-50%);
-    width: 34px; height: 40px; border-radius: 50%; transition: transform .3s ease;
-    background: linear-gradient(180deg, #8f7bff 0%, #6c5be0 45%, #b9a6ff 82%, #e6dcff 100%);
-  }
-  .iris::before {
-    content: ""; position: absolute; left: 50%; top: 12px; transform: translateX(-50%);
-    width: 14px; height: 18px; border-radius: 50%; background: #1c1140;
-  }
-  .shine1 { position: absolute; left: 6px; top: 5px; width: 10px; height: 10px; background: #fff; border-radius: 50%; }
-  .shine2 { position: absolute; right: 5px; bottom: 6px; width: 6px; height: 6px; background: rgba(255,255,255,.85); border-radius: 50%; }
-  .brow {
-    position: absolute; top: 0; left: 5px; right: 5px; height: 5px; background: #201430;
-    border-radius: 4px; opacity: 0; transition: all .25s; z-index: 2;
-  }
-  .mood-HAPPY .eye { transform: scaleY(.30); }
-  .mood-ANGRY .eye { transform: scaleY(.66); }
-  .mood-ANGRY .brow { opacity: 1; top: -1px; }
-  .mood-ANGRY .eye:first-child .brow { transform: rotate(-16deg); }
-  .mood-ANGRY .eye:last-child  .brow { transform: rotate(16deg); }
-  .mood-SAD .eye { transform: scaleY(.92); }
-  .mood-SAD .iris { transform: translateX(-50%) translateY(13px); }
-  .eye.blink { transform: scaleY(.08) !important; }
-
-  .mouth {
-    width: 28px; height: 7px; margin: 16px auto 0; background: #d94f74;
-    border-radius: 8px; transition: all .3s ease;
-  }
-  .mood-HAPPY .mouth { width: 48px; height: 20px; background: #8a2b4a; border-radius: 4px 4px 46px 46px; }
-  .mood-SAD   .mouth { width: 30px; height: 14px; background: #5f739b; border-radius: 46px 46px 4px 4px; }
-  .mood-ANGRY .mouth { width: 36px; height: 6px; background: #8a2333; }
-
-  .blush {
-    position: absolute; top: 148px; width: 36px; height: 14px; border-radius: 50%;
-    background: rgba(255,120,160,.30); filter: blur(4px); transition: background .4s;
-  }
-  .blush.l { left: 18px; } .blush.r { right: 18px; }
-  .mood-HAPPY .blush { background: rgba(255,150,180,.65); }
-
-  .tear {
-    position: absolute; left: calc(50% - 62px); top: 158px; width: 10px; height: 15px; opacity: 0;
-    background: linear-gradient(#bfe0ff, #5aa2f0); border-radius: 50% 50% 60% 60%;
-  }
-  .mood-SAD .tear { animation: tearfall 1.8s ease-in infinite; }
-  @keyframes tearfall {
-    0% { transform: translateY(0); opacity: .95; }
-    70% { opacity: .65; }
-    100% { transform: translateY(28px); opacity: 0; }
-  }
+  #face { width: 100%; display: block; border-radius: 10px; image-rendering: pixelated; }
   .mood-label {
-    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
-    font-size: 11px; letter-spacing: .16em; color: #cdbfff;
-    background: rgba(255,255,255,.09); padding: 4px 12px; border-radius: 999px;
+    margin-top: 8px; font-size: 11px; letter-spacing: .16em; color: #cdbfff; text-align: center;
   }
-  .face-caption { font-size: 11px; color: #8f7fd0; text-align: center; margin-top: 8px; letter-spacing: .08em; }
+  .face-caption { font-size: 11px; color: #8f7fd0; text-align: center; margin-top: 4px; letter-spacing: .06em; }
 
   /* ---------- chat ---------- */
   .chat {
@@ -142,12 +77,8 @@
     align-self: flex-start; color: #ece8ff; border-bottom-left-radius: 4px;
     background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.10);
   }
-  .msg .tag {
-    display: inline-block; font-size: 10px; letter-spacing: .14em; color: #b9aaff; margin-bottom: 4px;
-  }
+  .msg .tag { display: inline-block; font-size: 10px; letter-spacing: .14em; color: #b9aaff; margin-bottom: 4px; }
   .thinking { font-size: 12px; color: #b9aaff; padding: 0 18px 8px; letter-spacing: .04em; }
-  .thinking .d::after { content: ""; animation: dots 1.4s steps(4) infinite; }
-  @keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
 
   #chatForm { display: flex; gap: 8px; padding: 10px; border-top: 1px solid rgba(255,255,255,.08); }
   #message {
@@ -159,7 +90,7 @@
   #deviceLog { margin: 0 20px 16px; font-size: 11px; color: #7f74ad; }
   #deviceLog pre {
     background: rgba(0,0,0,.35); border-radius: 10px; padding: 10px; margin-top: 6px;
-    max-height: 140px; overflow: auto; white-space: pre-wrap;
+    max-height: 160px; overflow: auto; white-space: pre-wrap;
   }
   footer { text-align: center; font-size: 11px; color: #6b609a; padding: 0 0 14px; letter-spacing: .06em; }
 </style>
@@ -180,21 +111,15 @@
     laptop / desktop computer (Web Serial does not work on phones). Connect the handheld with a
     data USB cable, then click &ldquo;Connect Athena via USB&rdquo; and pick the COM port.
   </div>
+  <div id="diag"></div>
 
   <main>
-    <div>
-      <div id="faceCard" class="face-card mood-IDLE">
-        <div class="bangs"></div>
-        <div class="eyes">
-          <div class="eye"><div class="brow"></div><div class="iris"><div class="shine1"></div><div class="shine2"></div></div></div>
-          <div class="eye"><div class="brow"></div><div class="iris"><div class="shine1"></div><div class="shine2"></div></div></div>
-        </div>
-        <div class="mouth"></div>
-        <div class="blush l"></div><div class="blush r"></div>
-        <div class="tear"></div>
+    <div class="face-col">
+      <div class="face-card">
+        <canvas id="face" width="128" height="70"></canvas>
         <div class="mood-label" id="moodLabel">IDLE</div>
       </div>
-      <div class="face-caption">mirrors the handheld face</div>
+      <div class="face-caption">pixel-exact copy of the handheld face</div>
     </div>
 
     <section class="chat">
@@ -207,23 +132,231 @@
     </section>
   </main>
 
-  <details id="deviceLog"><summary>device log (debug)</summary><pre id="logPre"></pre></details>
-  <footer>USB serial &middot; 115200 baud &middot; Gemini on the handheld &middot; keep this page open while chatting</footer>
+  <details id="deviceLog"><summary>device log (debug) — every raw line the handheld sends</summary><pre id="logPre"></pre></details>
+  <footer>laptop page v2 &middot; USB serial 115200 baud &middot; Gemini runs on the handheld</footer>
 
 <script>
 "use strict";
+/* =====================================================================
+   PART 1 — THE FACE: direct port of the handheld's LovyanGFX draw code
+   (same RGB565 palette, same coordinates, same layer order as the .ino)
+   ===================================================================== */
+const cv = document.getElementById("face");
+const ctx = cv.getContext("2d");
+
+function c565(v) {
+  const r = (v >> 11) & 31, g = (v >> 5) & 63, b = v & 31;
+  return [Math.round(r * 255 / 31), Math.round(g * 255 / 63), Math.round(b * 255 / 31)];
+}
+const COL = {
+  LASH:       c565(0x08A6),  // near-black plum
+  SHADOW:     c565(0xED5A),  // pink eyeshadow
+  SCLERA:     c565(0xFFFF),
+  IRIS_TOP:   c565(0x39CD),  // deep violet
+  IRIS_MID:   c565(0x69F7),
+  IRIS_PALE:  c565(0xD5DF),
+  PUPIL:      c565(0x1845),
+  PUPIL_GLOW: c565(0x5992),
+  BLUSH:      c565(0xFC56),
+  BLUSH_SOFT: c565(0xF5FA),
+  BANG:       c565(0xFEDD),  // pink hair
+  BANG_DEEP:  c565(0xED5B),
+  BANG_LIGHT: c565(0xFF9F),
+  MOUTH:      c565(0xDB74),
+  TEAR:       c565(0x96AF)
+};
+const BG = { IDLE: c565(0x2010), HAPPY: c565(0x2845), SAD: c565(0x0868), ANGRY: c565(0x4024) };
+const EYE_L = 38, EYE_R = 90, EYE_CY = 36;
+
+function rgb(c) { return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")"; }
+function lerp(c1, c2, t) { return [0,1,2].map(i => Math.round(c1[i] + (c2[i] - c1[i]) * t)); }
+function grad3(c1, c2, c3, t) { return t < 0.5 ? lerp(c1, c2, t * 2) : lerp(c2, c3, (t - 0.5) * 2); }
+
+function fillEllipse(cx, cy, rx, ry, col) {
+  ctx.fillStyle = rgb(col);
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+function fillCircle(cx, cy, r, col) { fillEllipse(cx, cy, r, r, col); }
+function fillRoundRect(x, y, w, h, r, col) {
+  ctx.fillStyle = rgb(col);
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h);
+  ctx.fill();
+}
+function fillTriangle(x0, y0, x1, y1, x2, y2, col) {
+  ctx.fillStyle = rgb(col);
+  ctx.beginPath();
+  ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.lineTo(x2, y2);
+  ctx.closePath(); ctx.fill();
+}
+function drawLine(x0, y0, x1, y1, col) {
+  ctx.strokeStyle = rgb(col); ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x0 + .5, y0 + .5); ctx.lineTo(x1 + .5, y1 + .5);
+  ctx.stroke();
+}
+/* identical row-by-row vertical gradient to the .ino grad3 ellipse fill */
+function fillEllipseGradient(cx, cy, rx, ry, c1, c2, c3) {
+  for (let dy = -ry; dy <= ry; dy++) {
+    const t = (dy + ry) / (2 * ry);
+    const half = Math.round(rx * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry))));
+    if (half <= 0) continue;
+    ctx.fillStyle = rgb(grad3(c1, c2, c3, t));
+    ctx.fillRect(cx - half, cy + dy, half * 2 + 1, 1);
+  }
+}
+
+function drawBangs() {
+  fillEllipse(14, -2, 22, 14, COL.BANG);
+  fillEllipse(46, -6, 24, 16, COL.BANG);
+  fillEllipse(82, -6, 24, 16, COL.BANG);
+  fillEllipse(114, -2, 22, 14, COL.BANG);
+  drawLine(30, 0, 27, 12, COL.BANG_DEEP);
+  drawLine(62, 0, 60, 14, COL.BANG_DEEP);
+  drawLine(96, 0, 94, 13, COL.BANG_DEEP);
+  fillEllipse(38, 2, 12, 3, COL.BANG_LIGHT);
+  fillEllipse(90, 2, 12, 3, COL.BANG_LIGHT);
+}
+
+function drawAnimeEye(cx, mirror, droop, watery) {
+  const cy = EYE_CY, dr = mirror ? 1 : -1;
+  fillEllipse(cx, cy - 15, 20, 8, COL.SHADOW);
+  fillEllipse(cx, cy, 21, 22, COL.LASH);
+  fillEllipse(cx, cy + 2, 19, 19, COL.SCLERA);
+  const icy = cy + 2 + droop, iry = 19 - droop;
+  fillEllipseGradient(cx, icy, 17, iry, COL.IRIS_TOP, COL.IRIS_MID, COL.IRIS_PALE);
+  fillEllipse(cx, icy + 3, 9, iry - 7, COL.PUPIL);
+  fillEllipse(cx, icy + 8, 6, 6, COL.PUPIL_GLOW);
+  fillEllipse(cx, icy + iry - 4, 8, 3, COL.IRIS_PALE);
+  fillCircle(cx - 8, cy - 10 + (droop >> 1), 5, COL.SCLERA);
+  fillCircle(cx + 7, cy + 9, 3, COL.SCLERA);
+  fillCircle(cx + 11, cy - 5, 2, COL.SCLERA);
+  if (watery) fillCircle(cx - 4, cy + 14, 4, COL.SCLERA);
+  fillTriangle(cx + dr * 17, cy - 12, cx + dr * 24, cy - 17, cx + dr * 3, cy - 8, COL.LASH);
+  fillTriangle(cx + dr * 11, cy - 17, cx + dr * 17, cy - 23, cx + dr * 13, cy - 14, COL.LASH);
+  fillRoundRect(cx - 12, cy + 23, 24, 2, 1, COL.BLUSH_SOFT);
+  if (watery) {
+    fillEllipse(cx + dr * 14, cy + 20, 3, 5, COL.TEAR);
+    fillCircle(cx + dr * 14, cy + 18, 1, COL.SCLERA);
+  }
+}
+
+function drawClosedEye(cx, mirror, bg, happy) {
+  const cy = EYE_CY, dr = mirror ? 1 : -1;
+  fillEllipse(cx, cy - 15, 20, 8, COL.SHADOW);
+  fillEllipse(cx, cy, 21, 22, COL.LASH);
+  fillEllipse(cx, cy + 3, 19, 18, bg);
+  if (happy) {
+    fillEllipse(cx, cy + 1, 16, 8, COL.LASH);
+    fillEllipse(cx, cy - 2, 14, 7, bg);
+  } else {
+    fillEllipse(cx, cy + 7, 14, 2, COL.LASH);
+  }
+  fillTriangle(cx + dr * 11, cy + 3, cx + dr * 18, cy - 1, cx + dr * 10, cy + 8, COL.LASH);
+  fillTriangle(cx + dr * 16, cy + 7, cx + dr * 22, cy + 4, cx + dr * 15, cy + 12, COL.LASH);
+  fillRoundRect(cx - 12, cy + 23, 24, 2, 1, COL.BLUSH_SOFT);
+}
+
+function drawAngryEye(cx, mirror, bg) {
+  const cy = EYE_CY, dr = mirror ? 1 : -1;
+  fillEllipse(cx, cy - 14, 20, 7, COL.SHADOW);
+  fillEllipse(cx, cy + 4, 21, 20, COL.LASH);
+  fillEllipse(cx, cy + 6, 19, 18, bg);
+  const ox = cx + dr * 20, oy = cy - 16;      // outer corner, high
+  const ix = cx - dr * 20, iy = cy - 6;       // inner corner, low (angry slant)
+  fillTriangle(ox, oy, ix, iy, ox, oy + 7, COL.LASH);
+  fillTriangle(ox, oy + 7, ix, iy, ix, iy + 7, COL.LASH);
+  fillEllipse(cx, cy + 7, 18, 12, COL.SCLERA);
+  fillEllipseGradient(cx, cy + 8, 15, 10, COL.IRIS_TOP, COL.IRIS_MID, COL.IRIS_PALE);
+  fillEllipse(cx, cy + 9, 7, 7, COL.PUPIL);
+  fillEllipse(cx, cy + 12, 5, 3, COL.PUPIL_GLOW);
+  fillCircle(cx - 7, cy - 1, 4, COL.SCLERA);
+  fillCircle(cx + 6, cy + 8, 2, COL.SCLERA);
+  fillTriangle(cx + dr * 16, cy + 2, cx + dr * 24, cy - 2, cx + dr * 15, cy + 7, COL.LASH);
+  fillRoundRect(cx - 10, cy + 24, 20, 2, 1, COL.BLUSH_SOFT);
+}
+
+function drawBlush(strong) {
+  const c = strong ? COL.BLUSH : COL.BLUSH_SOFT;
+  for (let i = 0; i < 3; i++) {
+    drawLine(14 + i * 6, 56, 19 + i * 6, 62, c);
+    drawLine(113 - i * 6, 56, 108 - i * 6, 62, c);
+  }
+}
+
+function drawMouth(mood, bg) {
+  if (mood === "HAPPY") {
+    fillEllipse(64, 59, 8, 6, COL.MOUTH);
+    fillEllipse(64, 55, 8, 6, bg);
+  } else if (mood === "SAD") {
+    fillRoundRect(58, 62, 12, 2, 1, COL.MOUTH);
+  } else if (mood === "ANGRY") {
+    fillRoundRect(58, 61, 12, 2, 1, COL.MOUTH);
+  } else {
+    fillRoundRect(58, 60, 12, 2, 1, COL.MOUTH);
+  }
+}
+
+let faceMood = "IDLE", faceBlink = false;
+function renderFace() {
+  const bg = BG[faceMood] || BG.IDLE;
+  ctx.fillStyle = rgb(bg);
+  ctx.fillRect(0, 0, 128, 70);
+  drawBangs();
+  if (faceMood === "IDLE") {
+    if (faceBlink) { drawClosedEye(EYE_L, false, bg, false); drawClosedEye(EYE_R, true, bg, false); }
+    else           { drawAnimeEye(EYE_L, false, 0, false);   drawAnimeEye(EYE_R, true, 0, false); }
+  } else if (faceMood === "HAPPY") {
+    drawClosedEye(EYE_L, false, bg, true); drawClosedEye(EYE_R, true, bg, true);
+  } else if (faceMood === "SAD") {
+    drawAnimeEye(EYE_L, false, 4, true);   drawAnimeEye(EYE_R, true, 4, true);
+  } else {
+    drawAngryEye(EYE_L, false, bg);        drawAngryEye(EYE_R, true, bg);
+  }
+  drawBlush(faceMood === "HAPPY" || faceMood === "ANGRY");
+  drawMouth(faceMood, bg);
+}
+
+function setMood(mood) {
+  const m = (mood || "IDLE").toUpperCase();
+  faceMood = m.indexOf("SAD") >= 0 ? "SAD" : m.indexOf("ANG") >= 0 ? "ANGRY" :
+             m.indexOf("HAP") >= 0 ? "HAPPY" : "IDLE";
+  document.getElementById("moodLabel").textContent = faceMood;
+  faceBlink = false;
+  renderFace();
+}
+setMood("IDLE");
+
+/* blink loop — same rhythm as the handheld (only while calm) */
+setInterval(() => {
+  if (document.hidden || faceMood !== "IDLE") return;
+  faceBlink = true; renderFace();
+  setTimeout(() => { faceBlink = false; renderFace(); }, 160);
+}, 3600);
+
+/* =====================================================================
+   PART 2 — USB SERIAL BRIDGE with self-diagnostics
+   ===================================================================== */
 const $ = id => document.getElementById(id);
 const enc = new TextEncoder();
 let port = null, reader = null, writer = null, connected = false;
-let buffer = "", replyTimer = null;
+let buffer = "", replyTimer = null, helloTimer = null;
+let bytesIn = 0, linesIn = 0, gotHello = false, sawReply = false;
 
-/* ---------- device log ---------- */
 function devLog(line) {
   $("logPre").textContent += line + "\n";
-  $("deviceLog").open = false;
+  $("deviceLog").open = true;
 }
+function showDiag(text, tone) {
+  const d = $("diag");
+  d.textContent = text;
+  d.className = tone;                    // warn | bad | good
+  d.style.display = "block";
+}
+function hideDiag() { $("diag").style.display = "none"; }
 
-/* ---------- chat bubbles ---------- */
 function pushMsg(who, text, mood) {
   const div = document.createElement("div");
   div.className = "msg " + who;
@@ -244,27 +377,10 @@ function setThinking(on) {
   if (replyTimer) { clearTimeout(replyTimer); replyTimer = null; }
   if (on) replyTimer = setTimeout(() => {
     setThinking(false);
-    pushMsg("athena", "(she has not answered yet — is she still connected?)");
+    pushMsg("athena", "(she has not answered yet — is she connected to WiFi?)");
   }, 45000);
 }
 
-/* ---------- face mirroring ---------- */
-function setMood(mood) {
-  const m = (mood || "IDLE").toUpperCase();
-  const face = m.indexOf("SAD") >= 0 ? "SAD" : m.indexOf("ANG") >= 0 ? "ANGRY" :
-               m.indexOf("HAP") >= 0 ? "HAPPY" : "IDLE";
-  $("faceCard").className = "face-card mood-" + face;
-  $("moodLabel").textContent = face;
-}
-
-/* blink loop */
-setInterval(() => {
-  if (document.hidden) return;
-  document.querySelectorAll(".eye").forEach(e => e.classList.add("blink"));
-  setTimeout(() => document.querySelectorAll(".eye").forEach(e => e.classList.remove("blink")), 130);
-}, 3800);
-
-/* ---------- serial bridge ---------- */
 function setStatus(text, isOn) {
   $("status").textContent = text;
   $("status").className = isOn ? "on" : "";
@@ -272,25 +388,44 @@ function setStatus(text, isOn) {
 }
 
 async function connect() {
-  if (!("serial" in navigator)) {
-    $("compat").style.display = "block";
+  if (!("serial" in navigator)) { $("compat").style.display = "block"; return; }
+  hideDiag();
+  try {
+    port = await navigator.serial.requestPort();
+  } catch (e) {
+    setStatus("Port picker cancelled", false);
     return;
   }
   try {
-    port = await navigator.serial.requestPort();
-    // NOTE: opening the port restarts the ESP32 — wait a few seconds for her face
+    // NOTE: opening the port restarts the ESP32 — boot takes ~10-15 s
     await port.open({ baudRate: 115200 });
-    writer = port.writable.getWriter();
-    reader = port.readable.getReader();
-    connected = true;
-    buffer = "";
-    setStatus("Connecting to Athena...", true);
-    $("compat").style.display = "none";
-    readLoop();
-  } catch (err) {
-    connected = false;
-    setStatus("Connection cancelled", false);
+  } catch (e) {
+    setStatus("Port busy", false);
+    showDiag("Could not open the USB port: " + e.message +
+             "  →  Close the Arduino Serial Monitor (it holds the COM port), then click Connect again.", "bad");
+    port = null;
+    return;
   }
+  writer = port.writable.getWriter();
+  reader = port.readable.getReader();
+  connected = true; buffer = "";
+  bytesIn = 0; linesIn = 0; gotHello = false; sawReply = false;
+  setStatus("Port opened — waiting for Athena to wake up...", true);
+  showDiag("Port opened. The handheld is rebooting and connecting to WiFi (~15 s). " +
+           "If nothing happens below within 15 seconds, a red notice will appear here telling you exactly what is wrong.", "warn");
+  readLoop();
+  helloTimer = setTimeout(() => {
+    if (gotHello || sawReply) return;
+    if (bytesIn === 0) {
+      showDiag("Connected to the port, but the handheld sent NOTHING in 15 s. " +
+               "The sketch on your ESP32 is an OLD version without the USB bridge. " +
+               "Fix: open athena_complete.ino (the v4 file with the 'USB DUAL-SCREEN BRIDGE' comment at the top) in Arduino IDE and upload it to the board.", "bad");
+    } else {
+      showDiag("The handheld is sending data (" + bytesIn + " bytes) but never said hello — that means it runs the OLD v3 sketch. " +
+               "Chat may still work (try sending a message), but flash athena_complete.ino (v4) to get full sync.", "warn");
+      devLog("(no hello received after " + bytesIn + " bytes / " + linesIn + " lines)");
+    }
+  }, 15000);
 }
 
 async function readLoop() {
@@ -299,12 +434,16 @@ async function readLoop() {
     while (connected) {
       const { value, done } = await reader.read();
       if (done) break;
+      if (value && value.length) {
+        bytesIn += value.length;
+        if (!gotHello && !sawReply && bytesIn > 0 && bytesIn < 3) { /* noop */ }
+      }
       buffer += dec.decode(value, { stream: true });
       let nl;
       while ((nl = buffer.indexOf("\n")) !== -1) {
         const packet = buffer.slice(0, nl).trim();
         buffer = buffer.slice(nl + 1);
-        if (packet) handlePacket(packet);
+        if (packet) { linesIn++; handlePacket(packet); }
       }
     }
   } catch (err) {
@@ -320,6 +459,8 @@ function handlePacket(packet) {
     return;
   }
   if (data.type === "reply" || (!data.type && data.text && data.mood)) {
+    sawReply = true; gotHello = true; clearTimeout(helloTimer); hideDiag();
+    if (!data.type) devLog("(old v3 sketch detected — reply accepted anyway)");
     setThinking(false);
     setMood(data.mood);
     pushMsg("athena", data.text || "", data.mood || "");
@@ -328,7 +469,9 @@ function handlePacket(packet) {
   } else if (data.type === "state") {
     setMood(data.mood);
   } else if (data.type === "hello") {
+    gotHello = true; clearTimeout(helloTimer); hideDiag();
     setStatus("Athena connected", true);
+    showDiag("Athena is awake and linked over USB. Everything is in sync.", "good");
   } else {
     devLog(packet);
   }
@@ -337,6 +480,7 @@ function handlePacket(packet) {
 function handleDisconnect() {
   if (!connected) return;
   connected = false;
+  clearTimeout(helloTimer);
   try { if (writer) writer.releaseLock(); } catch (e) {}
   try { if (reader) reader.releaseLock(); } catch (e) {}
   writer = null; reader = null;
