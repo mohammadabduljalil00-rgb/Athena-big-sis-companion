@@ -1,43 +1,391 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Athena AI</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Athena · Big Sis Companion</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(1200px 700px at 70% -10%, #31215e 0%, #191026 55%, #120b1d 100%);
+    min-height: 100vh; color: #ece8ff; display: flex; flex-direction: column;
+  }
+  header {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: 10px; padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .brand { font-size: 20px; font-weight: 700; letter-spacing: .22em; color: #cdbfff; }
+  .brand span { font-size: 11px; letter-spacing: .18em; color: #8f7fd0; display: block; margin-top: 2px; }
+  .controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    border: 0; border-radius: 999px; padding: 8px 16px; font-size: 13px; font-weight: 600;
+    cursor: pointer; background: linear-gradient(135deg, #8f6cff, #5a3fd6); color: #fff;
+  }
+  .btn:hover { filter: brightness(1.12); }
+  .btn.ghost { background: rgba(255,255,255,.09); color: #cdbfff; }
+  .btn:disabled { opacity: .35; cursor: default; }
+  #status {
+    font-size: 12px; padding: 6px 12px; border-radius: 999px; letter-spacing: .06em;
+    background: rgba(255,255,255,.07); color: #ff9db1;
+  }
+  #status.on { background: rgba(61,220,132,.14); color: #6fe7a4; }
+
+  #compat {
+    display: none; margin: 12px 20px 0; padding: 12px 16px; font-size: 13px; line-height: 1.5;
+    background: rgba(180,50,70,.18); border: 1px solid rgba(255,120,140,.35);
+    border-radius: 12px; color: #ffd3dd;
+  }
+
+  main { flex: 1; display: flex; gap: 18px; padding: 18px 20px; max-width: 1020px; width: 100%; margin: 0 auto; }
+  @media (max-width: 760px) { main { flex-direction: column; align-items: center; } }
+
+  /* ---------- anime face (mirrors the handheld TFT) ---------- */
+  .face-card {
+    width: 250px; min-width: 250px; height: 340px; border-radius: 22px; position: relative;
+    overflow: hidden; box-shadow: 0 10px 34px rgba(0,0,0,.45); transition: background .6s ease;
+    border: 1px solid rgba(255,255,255,.10);
+  }
+  .mood-IDLE  { background: linear-gradient(165deg, #2a1b4e, #160e2c); }
+  .mood-HAPPY { background: linear-gradient(165deg, #8a5a18, #38220a); }
+  .mood-ANGRY { background: linear-gradient(165deg, #6e1420, #26060c); }
+  .mood-SAD   { background: linear-gradient(165deg, #14345e, #0a1526); }
+
+  .bangs {
+    position: absolute; top: -10px; left: -8px; right: -8px; height: 66px;
+    background: #3b2a66; border-radius: 0 0 44% 44% / 0 0 70% 70%;
+  }
+  .bangs::before, .bangs::after {
+    content: ""; position: absolute; top: 0; width: 20px; height: 86px;
+    background: #3b2a66; border-radius: 12px;
+  }
+  .bangs::before { left: 4px; } .bangs::after { right: 4px; }
+
+  .eyes { position: relative; margin: 86px auto 0; display: flex; gap: 30px; justify-content: center; }
+  .eye {
+    width: 46px; height: 56px; background: #fff; position: relative; overflow: hidden;
+    border-radius: 50% 50% 48% 48% / 55% 55% 45% 45%; border: 3px solid #201430;
+    transition: transform .18s ease;
+  }
+  .iris {
+    position: absolute; left: 50%; top: 6px; transform: translateX(-50%);
+    width: 34px; height: 40px; border-radius: 50%; transition: transform .3s ease;
+    background: linear-gradient(180deg, #8f7bff 0%, #6c5be0 45%, #b9a6ff 82%, #e6dcff 100%);
+  }
+  .iris::before {
+    content: ""; position: absolute; left: 50%; top: 12px; transform: translateX(-50%);
+    width: 14px; height: 18px; border-radius: 50%; background: #1c1140;
+  }
+  .shine1 { position: absolute; left: 6px; top: 5px; width: 10px; height: 10px; background: #fff; border-radius: 50%; }
+  .shine2 { position: absolute; right: 5px; bottom: 6px; width: 6px; height: 6px; background: rgba(255,255,255,.85); border-radius: 50%; }
+  .brow {
+    position: absolute; top: 0; left: 5px; right: 5px; height: 5px; background: #201430;
+    border-radius: 4px; opacity: 0; transition: all .25s; z-index: 2;
+  }
+  .mood-HAPPY .eye { transform: scaleY(.30); }
+  .mood-ANGRY .eye { transform: scaleY(.66); }
+  .mood-ANGRY .brow { opacity: 1; top: -1px; }
+  .mood-ANGRY .eye:first-child .brow { transform: rotate(-16deg); }
+  .mood-ANGRY .eye:last-child  .brow { transform: rotate(16deg); }
+  .mood-SAD .eye { transform: scaleY(.92); }
+  .mood-SAD .iris { transform: translateX(-50%) translateY(13px); }
+  .eye.blink { transform: scaleY(.08) !important; }
+
+  .mouth {
+    width: 28px; height: 7px; margin: 16px auto 0; background: #d94f74;
+    border-radius: 8px; transition: all .3s ease;
+  }
+  .mood-HAPPY .mouth { width: 48px; height: 20px; background: #8a2b4a; border-radius: 4px 4px 46px 46px; }
+  .mood-SAD   .mouth { width: 30px; height: 14px; background: #5f739b; border-radius: 46px 46px 4px 4px; }
+  .mood-ANGRY .mouth { width: 36px; height: 6px; background: #8a2333; }
+
+  .blush {
+    position: absolute; top: 148px; width: 36px; height: 14px; border-radius: 50%;
+    background: rgba(255,120,160,.30); filter: blur(4px); transition: background .4s;
+  }
+  .blush.l { left: 18px; } .blush.r { right: 18px; }
+  .mood-HAPPY .blush { background: rgba(255,150,180,.65); }
+
+  .tear {
+    position: absolute; left: calc(50% - 62px); top: 158px; width: 10px; height: 15px; opacity: 0;
+    background: linear-gradient(#bfe0ff, #5aa2f0); border-radius: 50% 50% 60% 60%;
+  }
+  .mood-SAD .tear { animation: tearfall 1.8s ease-in infinite; }
+  @keyframes tearfall {
+    0% { transform: translateY(0); opacity: .95; }
+    70% { opacity: .65; }
+    100% { transform: translateY(28px); opacity: 0; }
+  }
+  .mood-label {
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; letter-spacing: .16em; color: #cdbfff;
+    background: rgba(255,255,255,.09); padding: 4px 12px; border-radius: 999px;
+  }
+  .face-caption { font-size: 11px; color: #8f7fd0; text-align: center; margin-top: 8px; letter-spacing: .08em; }
+
+  /* ---------- chat ---------- */
+  .chat {
+    flex: 1; display: flex; flex-direction: column; min-height: 420px;
+    background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.09);
+    border-radius: 22px; overflow: hidden;
+  }
+  .log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .msg {
+    max-width: 80%; padding: 10px 14px; border-radius: 16px; line-height: 1.5;
+    font-size: 14px; white-space: pre-wrap; overflow-wrap: break-word;
+  }
+  .msg.user {
+    align-self: flex-end; color: #fff; border-bottom-right-radius: 4px;
+    background: linear-gradient(135deg, #7b5cff, #5a3fd6);
+  }
+  .msg.athena {
+    align-self: flex-start; color: #ece8ff; border-bottom-left-radius: 4px;
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.10);
+  }
+  .msg .tag {
+    display: inline-block; font-size: 10px; letter-spacing: .14em; color: #b9aaff; margin-bottom: 4px;
+  }
+  .thinking { font-size: 12px; color: #b9aaff; padding: 0 18px 8px; letter-spacing: .04em; }
+  .thinking .d::after { content: ""; animation: dots 1.4s steps(4) infinite; }
+  @keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+
+  #chatForm { display: flex; gap: 8px; padding: 10px; border-top: 1px solid rgba(255,255,255,.08); }
+  #message {
+    flex: 1; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; outline: none;
+    background: rgba(0,0,0,.30); color: #fff; padding: 11px 18px; font-size: 14px;
+  }
+  #message:focus { border-color: #8f6cff; }
+
+  #deviceLog { margin: 0 20px 16px; font-size: 11px; color: #7f74ad; }
+  #deviceLog pre {
+    background: rgba(0,0,0,.35); border-radius: 10px; padding: 10px; margin-top: 6px;
+    max-height: 140px; overflow: auto; white-space: pre-wrap;
+  }
+  footer { text-align: center; font-size: 11px; color: #6b609a; padding: 0 0 14px; letter-spacing: .06em; }
+</style>
 </head>
 <body>
-<main class="app">
   <header>
-    <h1>ATHENA</h1>
-    <span id="status">Handheld disconnected</span>
+    <div class="brand">ATHENA<span>BIG SIS COMPANION</span></div>
+    <div class="controls">
+      <span id="status">Handheld disconnected</span>
+      <button class="btn" id="connectBtn">Connect Athena via USB</button>
+      <button class="btn ghost" id="disconnectBtn" disabled>Disconnect</button>
+      <button class="btn ghost" id="clearBtn">Clear chat</button>
+    </div>
   </header>
 
-  <section class="face">
-    <div class="eyes">
-      <div class="eye"><div class="pupil"></div></div>
-      <div class="eye"><div class="pupil"></div></div>
-    </div>
-    <div id="mouth"></div>
-  </section>
+  <div id="compat">
+    This browser cannot talk to USB devices. Open this page in <b>Chrome</b> or <b>Edge</b> on a
+    laptop / desktop computer (Web Serial does not work on phones). Connect the handheld with a
+    data USB cable, then click &ldquo;Connect Athena via USB&rdquo; and pick the COM port.
+  </div>
 
-  <section class="connection">
-    <button id="connect">Connect Athena via USB</button>
-    <button id="disconnect" disabled>Disconnect</button>
-  </section>
-
-  <section id="chat">
-    <div id="messages">
-      <p class="athena">Hello! I'm Athena. I'm ready.</p>
+  <main>
+    <div>
+      <div id="faceCard" class="face-card mood-IDLE">
+        <div class="bangs"></div>
+        <div class="eyes">
+          <div class="eye"><div class="brow"></div><div class="iris"><div class="shine1"></div><div class="shine2"></div></div></div>
+          <div class="eye"><div class="brow"></div><div class="iris"><div class="shine1"></div><div class="shine2"></div></div></div>
+        </div>
+        <div class="mouth"></div>
+        <div class="blush l"></div><div class="blush r"></div>
+        <div class="tear"></div>
+        <div class="mood-label" id="moodLabel">IDLE</div>
+      </div>
+      <div class="face-caption">mirrors the handheld face</div>
     </div>
-    <form id="chatForm">
-      <input id="message" placeholder="Talk to Athena..." autocomplete="off">
-      <button type="submit">Send</button>
-    </form>
-  </section>
-  <footer>ATHENA DUAL-SCREEN · ESP32</footer>
-</main>
-<script src="athena.js"></script>
+
+    <section class="chat">
+      <div class="log" id="log"></div>
+      <div class="thinking" id="thinking" hidden>Athena is thinking<span class="d"></span></div>
+      <form id="chatForm" autocomplete="off">
+        <input id="message" placeholder="Type to your big sis... (no length limit)" maxlength="4000">
+        <button class="btn" type="submit">Send</button>
+      </form>
+    </section>
+  </main>
+
+  <details id="deviceLog"><summary>device log (debug)</summary><pre id="logPre"></pre></details>
+  <footer>USB serial &middot; 115200 baud &middot; Gemini on the handheld &middot; keep this page open while chatting</footer>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const enc = new TextEncoder();
+let port = null, reader = null, writer = null, connected = false;
+let buffer = "", replyTimer = null;
+
+/* ---------- device log ---------- */
+function devLog(line) {
+  $("logPre").textContent += line + "\n";
+  $("deviceLog").open = false;
+}
+
+/* ---------- chat bubbles ---------- */
+function pushMsg(who, text, mood) {
+  const div = document.createElement("div");
+  div.className = "msg " + who;
+  if (who === "athena" && mood) {
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = "ATHENA · " + mood;
+    div.appendChild(tag);
+    div.appendChild(document.createElement("br"));
+  }
+  div.appendChild(document.createTextNode(text));
+  $("log").appendChild(div);
+  $("log").scrollTop = $("log").scrollHeight;
+}
+
+function setThinking(on) {
+  $("thinking").hidden = !on;
+  if (replyTimer) { clearTimeout(replyTimer); replyTimer = null; }
+  if (on) replyTimer = setTimeout(() => {
+    setThinking(false);
+    pushMsg("athena", "(she has not answered yet — is she still connected?)");
+  }, 45000);
+}
+
+/* ---------- face mirroring ---------- */
+function setMood(mood) {
+  const m = (mood || "IDLE").toUpperCase();
+  const face = m.indexOf("SAD") >= 0 ? "SAD" : m.indexOf("ANG") >= 0 ? "ANGRY" :
+               m.indexOf("HAP") >= 0 ? "HAPPY" : "IDLE";
+  $("faceCard").className = "face-card mood-" + face;
+  $("moodLabel").textContent = face;
+}
+
+/* blink loop */
+setInterval(() => {
+  if (document.hidden) return;
+  document.querySelectorAll(".eye").forEach(e => e.classList.add("blink"));
+  setTimeout(() => document.querySelectorAll(".eye").forEach(e => e.classList.remove("blink")), 130);
+}, 3800);
+
+/* ---------- serial bridge ---------- */
+function setStatus(text, isOn) {
+  $("status").textContent = text;
+  $("status").className = isOn ? "on" : "";
+  $("disconnectBtn").disabled = !isOn;
+}
+
+async function connect() {
+  if (!("serial" in navigator)) {
+    $("compat").style.display = "block";
+    return;
+  }
+  try {
+    port = await navigator.serial.requestPort();
+    // NOTE: opening the port restarts the ESP32 — wait a few seconds for her face
+    await port.open({ baudRate: 115200 });
+    writer = port.writable.getWriter();
+    reader = port.readable.getReader();
+    connected = true;
+    buffer = "";
+    setStatus("Connecting to Athena...", true);
+    $("compat").style.display = "none";
+    readLoop();
+  } catch (err) {
+    connected = false;
+    setStatus("Connection cancelled", false);
+  }
+}
+
+async function readLoop() {
+  const dec = new TextDecoder();
+  try {
+    while (connected) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += dec.decode(value, { stream: true });
+      let nl;
+      while ((nl = buffer.indexOf("\n")) !== -1) {
+        const packet = buffer.slice(0, nl).trim();
+        buffer = buffer.slice(nl + 1);
+        if (packet) handlePacket(packet);
+      }
+    }
+  } catch (err) {
+    devLog("read error: " + err);
+  }
+  handleDisconnect();
+}
+
+function handlePacket(packet) {
+  let data = null;
+  try { data = JSON.parse(packet); } catch (e) {
+    devLog(packet);              // boot / debug line from the handheld
+    return;
+  }
+  if (data.type === "reply" || (!data.type && data.text && data.mood)) {
+    setThinking(false);
+    setMood(data.mood);
+    pushMsg("athena", data.text || "", data.mood || "");
+  } else if (data.type === "message") {
+    pushMsg("user", data.text || "");
+  } else if (data.type === "state") {
+    setMood(data.mood);
+  } else if (data.type === "hello") {
+    setStatus("Athena connected", true);
+  } else {
+    devLog(packet);
+  }
+}
+
+function handleDisconnect() {
+  if (!connected) return;
+  connected = false;
+  try { if (writer) writer.releaseLock(); } catch (e) {}
+  try { if (reader) reader.releaseLock(); } catch (e) {}
+  writer = null; reader = null;
+  const p = port; port = null;
+  if (p && p.close) p.close().catch(() => {});
+  setThinking(false);
+  setStatus("Handheld disconnected", false);
+  pushMsg("athena", "(USB disconnected — plug back in and click Connect)");
+}
+
+async function disconnect() {
+  connected = false;
+  try { if (reader) await reader.cancel(); } catch (e) {}
+  handleDisconnect();
+}
+
+async function sendText(text) {
+  pushMsg("user", text);
+  if (!connected || !writer) {
+    pushMsg("athena", "Connect the handheld first (USB).");
+    return;
+  }
+  setThinking(true);
+  try {
+    await writer.write(enc.encode(JSON.stringify({ type: "user_message", text: text }) + "\n"));
+  } catch (err) {
+    setThinking(false);
+    pushMsg("athena", "(USB send error — try reconnecting)");
+  }
+}
+
+/* ---------- wiring ---------- */
+$("connectBtn").addEventListener("click", connect);
+$("disconnectBtn").addEventListener("click", disconnect);
+$("clearBtn").addEventListener("click", () => {
+  $("log").innerHTML = "";
+  pushMsg("athena", "Chat cleared. I'm still here for you!");
+});
+$("chatForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const input = $("message");
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+  sendText(text);
+});
+
+if (!("serial" in navigator)) $("compat").style.display = "block";
+pushMsg("athena", "Hello! I'm Athena. Connect me over USB and talk to me from here — the handheld face follows this chat.");
+</script>
 </body>
 </html>
